@@ -1,28 +1,31 @@
 version: "3.1"
 
 services:
-  db:
+  postgres-db:
     image: postgres
     restart: always
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
-  express-app:
-    image: node:18
-    working_dir: /app
+  express-api:
+    restart: on-failure
+    build: .
     environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/db
       NODE_ENV: development
+      PORT: 3000
     volumes:
       - .:/app
     ports:
       - "3000:3000"
     depends_on:
-      - db
-    command: ["npm", "start"]
+      - postgres-db
 
 volumes:
   postgres_data:
