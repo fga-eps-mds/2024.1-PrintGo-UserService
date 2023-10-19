@@ -5,11 +5,11 @@ WORKDIR /app
 ENV PORT=3000
 
 COPY ./package.json .
-RUN npm cache clean --force
-RUN npm install
+COPY ./yarn.lock .
+RUN yarn install
+
 COPY . .
 
 EXPOSE $PORT
 
-# CMD npm start
-CMD [ "npm", "start" ]
+CMD [ "yarn", "start" ]

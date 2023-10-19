@@ -18,7 +18,7 @@ Aplicação disponível em: [link da aplicação](?)
 
 ### Localmente
 
-- npm
+- yarn
 
 ### Docker
 
@@ -34,8 +34,7 @@ git clone git@github.com:fga-eps-mds/2023.2-PrintGo-BackEnd.git
 cd 2023.2-PrintGo-BackEnd
 
 # 3. instale dependencias 
-npm i
-
+yarn
 # 4. execute projeto
 ```
 
