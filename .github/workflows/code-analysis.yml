@@ -20,7 +20,7 @@ jobs:
         run: yarn
 
       - name: Executa linter
-         run: yarn lint
+        run: yarn lint
 
       - name: Executa testes e gera cobertura
         run: yarn test
