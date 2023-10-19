@@ -32,10 +32,10 @@ Aplicação disponível em: [link da aplicação](?)
 
 ```bash
 # 1. Clone o projeto
-git clone git@github.com:fga-eps-mds/2023.2-PrintGo-BackEnd.git
+git clone git@github.com:fga-eps-mds/2023.2-PrintGo-UserService.git
 
 # 2. Entre na pasta do projeto
-cd 2023.2-PrintGo-BackEnd
+cd 2023.2-PrintGo-UserService
 
 # 3. instale dependencias 
 yarn

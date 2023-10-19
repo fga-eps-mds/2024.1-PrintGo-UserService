@@ -38,5 +38,5 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
           flags: jest
-          name: 2023.2-PrintGo-BackEnd
+          name: 2023.2-PrintGo-UserService
           verbose: true

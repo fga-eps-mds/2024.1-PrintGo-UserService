@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fga-eps-mds/2023.2-PrintGo-BackEnd.git"
+    "url": "https://github.com/fga-eps-mds/2023.2-PrintGo-UserService.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fga-eps-mds/2023.2-PrintGo-BackEnd/issues"
+    "url": "https://github.com/fga-eps-mds/2023.2-PrintGo-UserService/issues"
   },
-  "homepage": "https://github.com/fga-eps-mds/2023.2-PrintGo-BackEnd#readme",
+  "homepage": "https://github.com/fga-eps-mds/2023.2-PrintGo-UserService#readme",
   "dependencies": {
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
