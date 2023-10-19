@@ -1,4 +1,4 @@
-# 2023.2-PrintGo-FrontEnd
+# 2023.2-PrintGo-UserService
 
 <div align="center">
      <img src="assets/logoPrintGo.svg" height="350px" width="350px"> 
@@ -6,7 +6,7 @@
 
 ## Quality Control
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fga-eps-mds_2023.2-PrintGo-BackEnd&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=fga-eps-mds_2023.2-PrintGo-BackEnd)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fga-eps-mds_2023.2-PrintGo-UserService&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=fga-eps-mds_2023.2-PrintGo-UserService)
 
 ## Sobre
 
@@ -53,6 +53,3 @@ yarn
 
 - [Back-End: UserAPI](https://github.com/fga-eps-mds/2023.2-PrintGo-BackEnd)
   
-- [Back-End: EquipamentAPI](?) 
-
-- [Back-End: GateWay](?) 
