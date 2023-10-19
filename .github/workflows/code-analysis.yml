@@ -19,7 +19,7 @@ jobs:
       - name: Instala dependências
         run: yarn
 
-       - name: Executa linter
+      - name: Executa linter
          run: yarn lint
 
       - name: Executa testes e gera cobertura
