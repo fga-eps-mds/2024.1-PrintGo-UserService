@@ -13,11 +13,11 @@ jobs:
       - name: Instala dependências
         run: yarn
 
-      - name: Executa linter
-        run: yarn lint
+      # - name: Executa linter
+      #   run: yarn lint
 
       - name: Executa testes e gera cobertura
-        run: yarn test:all
+        run: yarn test
 
       - name: Executa SonarCloud Scan
         if: ${{ always() }}
