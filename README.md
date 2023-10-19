@@ -1,4 +1,4 @@
-# 2023.2-PrintGo-FrontEnd
+# 2023.2-PrintGo-UserService
 
 <div align="center">
      <img src="assets/logoPrintGo.svg" height="350px" width="350px"> 
@@ -53,6 +53,3 @@ yarn
 
 - [Back-End: UserAPI](https://github.com/fga-eps-mds/2023.2-PrintGo-BackEnd)
   
-- [Back-End: EquipamentAPI](?) 
-
-- [Back-End: GateWay](?) 
