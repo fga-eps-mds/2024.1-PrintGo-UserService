@@ -4,7 +4,7 @@ const axios = require('axios')
 const fs = require('fs')
 require('dotenv').config()
 
-const { SONAR_URL, REPO, OWNER } = require('./consts.js')
+const { SONAR_URL, REPO, OWNER } = require('./metrics.js')
 
 const { TOKEN, RELEASE_MAJOR, RELEASE_MINOR } = process.env
 
