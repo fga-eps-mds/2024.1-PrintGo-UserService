@@ -1,5 +1,6 @@
 const REPO = '2023.2-PrintGo-UserService'
-const OWNER = 'fga-eps-mds-1'
+const SONAR_OWNER = 'fga-eps-mds-1'
+const OWNER = 'fga-eps-mds'
 const SONAR_ID = 'fga-eps-mds_2023.2-PrintGo-BackEnd'
 
 const METRIC_LIST = [
