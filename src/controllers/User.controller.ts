@@ -50,7 +50,7 @@ export default {
             const users = await prisma.lotacao.findMany();
             return response.json(users);
         } catch (error) {
-            response.status(500).json({ error: 'Ocorreu um erro ao buscar os Usuarios.' });
+            response.status(500).json({ error: 'Erro: Ocorreu um erro ao buscar os Usuarios.' });
         }
     },
 
@@ -65,9 +65,9 @@ export default {
     
             return user? 
                 response.json(user):
-                response.status(404).json({ error: 'Não foi possível encontrar o usuario.'});
+                response.status(404).json({ error: 'Erro: Não foi possível encontrar o usuario.'});
         } catch (error) {
-            response.status(500).json({ error: 'Ocorreu um erro ao buscar  o usuario por ID.' });
+            response.status(500).json({ error: 'Erro: Ocorreu um erro ao buscar  o usuario por ID.' });
         }
     },
     
