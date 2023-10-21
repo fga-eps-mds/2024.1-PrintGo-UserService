@@ -20,7 +20,8 @@ export default {
 
             if (lotacaoExist) {
                 return response.status(400).json({
-                    error: 'Erro: Lotação já existe!'
+                    error: true,
+                    message: 'Erro: Lotação já existe!'
                 });
             }
 
@@ -52,23 +53,32 @@ export default {
             const lotacoes = await prisma.lotacao.findMany();
             response.json(lotacoes);
         } catch (error) {
-            response.status(500).json({ error: 'Erro: Ocorreu um erro ao buscar as Lotações.' });
+            response.status(500).json({
+                error: true,
+                message: 'Erro: Ocorreu um erro ao buscar as Lotações.'
+            });
         }
     },
 
     async getLotacaoById(request: Request, response: Response) {
         const { id } = request.params;
-    
+
         try {
             const lotacao = await prisma.lotacao.findUnique({
                 where: { id: String(id) },
             });
-    
-            return lotacao? 
+
+            return lotacao?
                 response.json(lotacao):
-                response.status(404).json({ error: 'Erro: Não foi possível encontrar a lotação.'});
+                response.status(404).json({
+                    error: true,
+                    message: 'Erro: Não foi possível encontrar a lotação.'
+                });
         } catch (error) {
-            response.status(500).json({ error: 'Erro: Ocorreu um erro ao buscar  a lotação por ID.' });
+            response.status(500).json({
+                error: true,
+                message: 'Erro: Ocorreu um erro ao buscar  a lotação por ID.'
+            });
         }
     },
 };

@@ -57,6 +57,8 @@ docker-compose up --build
     # --build somente eh necessario na primeira vez que estiver rodando
     # depois `docker-compose up` ja resolve
     # em linux talvez seja necessario a execucao em modo root `sudo docker-compose up`
+    # voce pode também caso queria adicionar um -d ao final para liberar o o terminal `docker-compose up -d`
+    # Para finalizar o servico execute no root do projeto `docker-compose down`
 
 # finalizado execução do docker faca o migrate da base de dados
 yarn db:migrate
