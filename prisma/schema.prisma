@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Cargo {
+  USER
+  ADMIN
+}
+
+enum EmpressoraStatus {
+    ATIVA
+    DESATIVA
+}
+
+model User {
+    id    String     @id @default(cuid()) @db.VarChar(256)
+    email String  @unique
+    nome  String? @db.VarChar(256)
+    documento String @db.VarChar(14)
+    lotacao_id String @db.VarChar(256)
+
+    impressoes Impressao[]
+
+    cargo_id Cargo @default(USER)
+    lotacao Lotacao  @relation(fields: [lotacao_id], references: [id])
+    @@map("users")
+}
+
+model Lotacao {
+    id String @id @default(cuid())
+    nome String @unique @db.VarChar(256)
+    rua String @db.VarChar(256)
+    logradouro String @db.VarChar(256)
+    complemento String @db.VarChar(256)
+    bairro String @db.VarChar(256)
+    cidade String @db.VarChar(256)
+    cep String @db.VarChar(256)
+    numero Int
+    usuarios User[]
+    @@map("lotacoes")
+}
+
+model Impressora {
+    id String @id @default(cuid())
+    endereco_ip String @db.VarChar(256)
+    modelo String @db.VarChar(256)
+    localizacao String @db.VarChar(256)
+    marca String @db.VarChar(256)
+    status EmpressoraStatus @default(DESATIVA)
+    numero_impressora String
+    impressoes Impressao[]
+}
+
+model Impressao {
+    id String @id @default(cuid())
+    impressora_id String @db.VarChar(256)
+    user_id String @db.VarChar(256)
+    data_impressao DateTime @default(now())
+    nome_documento String @db.VarChar(256)
+    numero_paginas Int
+    user User @relation(fields: [user_id], references: [id])
+    impressora Impressora @relation(fields: [impressora_id], references: [id])
+}
