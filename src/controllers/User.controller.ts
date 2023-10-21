@@ -9,7 +9,7 @@ export default {
             const { nome, email, documento, lotacao_id, cargos } = request.body as UserCreateInput;
             const emailExist = await prisma.user.findUnique({ where: { email } });
 
-            if(checkCpfOrCnpj(documento)) {
+            if(!checkCpfOrCnpj(documento)) {
                 return response.status(400).json({
                     error: 'Erro: CPF ou CNPJ inválido!'
                 });
@@ -43,7 +43,7 @@ export default {
             return response.status(500).json({ error: error.message });
         }
     },
-    
+
 
     async  listUsers(request: Request, response: Response) {
         try {
@@ -54,21 +54,21 @@ export default {
         }
     },
 
-    
+
     async getUserById(request: Request, response: Response) {
         const { id } = request.params;
-    
+
         try {
             const user = await prisma.user.findUnique({
                 where: { id: String(id) },
             });
-    
-            return user? 
+
+            return user?
                 response.json(user):
                 response.status(404).json({ error: 'Erro: Não foi possível encontrar o usuario.'});
         } catch (error) {
             response.status(500).json({ error: 'Erro: Ocorreu um erro ao buscar  o usuario por ID.' });
         }
     },
-    
+
 };

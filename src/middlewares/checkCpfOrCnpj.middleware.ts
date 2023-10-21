@@ -1,13 +1,15 @@
-export const checkCpfOrCnpj = (cpf: string): boolean => {
+export const checkCpfOrCnpj = (documento: string): boolean => {
 
-    if (cpf.length !== 11) {
+    if (documento.length !== 11 && documento.length !== 14) {
         return false;
     }
+    return documento.length === 11 ? checkCpf(documento) : checkCnpj(documento);
+};
 
-    // Cálculo do primeiro dígito verificador.
+const checkCpf = (documento:string): boolean => {
     let soma = 0;
     for (let i = 0; i < 9; i++) {
-        soma += parseInt(cpf.charAt(i)) * (10 - i);
+        soma += parseInt(documento.charAt(i)) * (10 - i);
     }
     let digito1 = 11 - (soma % 11);
 
@@ -16,14 +18,14 @@ export const checkCpfOrCnpj = (cpf: string): boolean => {
     }
 
     // Verifique o primeiro dígito.
-    if (digito1 !== parseInt(cpf.charAt(9))) {
+    if (digito1 !== parseInt(documento.charAt(9))) {
         return false;
     }
 
     // Cálculo do segundo dígito verificador.
     soma = 0;
     for (let i = 0; i < 10; i++) {
-        soma += parseInt(cpf.charAt(i)) * (11 - i);
+        soma += parseInt(documento.charAt(i)) * (11 - i);
     }
     let digito2 = 11 - (soma % 11);
 
@@ -32,10 +34,14 @@ export const checkCpfOrCnpj = (cpf: string): boolean => {
     }
 
     // Verifique o segundo dígito.
-    if (digito2 !== parseInt(cpf.charAt(10))) {
+    if (digito2 !== parseInt(documento.charAt(10))) {
         return false;
     }
 
     // Verificação concluída.
     return true;
+};
+
+const checkCnpj = (documento:string): boolean => {
+    return documento ? false: true;
 };
