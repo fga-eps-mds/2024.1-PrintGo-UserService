@@ -1,4 +1,4 @@
 export type Response = {
-    error: boolean,
+    error?: boolean,
     message: unknown
 }
