@@ -7,11 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Cargo {
-  USER
-  ADMIN
-}
-
 enum EmpressoraStatus {
     ATIVA
     DESATIVA
@@ -19,14 +14,12 @@ enum EmpressoraStatus {
 
 model User {
     id    String     @id @default(cuid()) @db.VarChar(256)
-    email String  @unique
+    email String  @unique @db.VarChar(256)
     nome  String? @db.VarChar(256)
     documento String @db.VarChar(14)
     lotacao_id String @db.VarChar(256)
-
     impressoes Impressao[]
-
-    cargo_id Cargo @default(USER)
+    cargos String[] @default(["USER"])
     lotacao Lotacao  @relation(fields: [lotacao_id], references: [id])
     @@map("users")
 }
@@ -54,6 +47,7 @@ model Impressora {
     status EmpressoraStatus @default(DESATIVA)
     numero_impressora String
     impressoes Impressao[]
+    @@map("impressoras")
 }
 
 model Impressao {
@@ -65,4 +59,5 @@ model Impressao {
     numero_paginas Int
     user User @relation(fields: [user_id], references: [id])
     impressora Impressora @relation(fields: [impressora_id], references: [id])
+    @@map("impressoes")
 }

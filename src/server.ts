@@ -1,21 +1,19 @@
 import Express from 'express';
-import UserController from './controllers/UserController';
-import PostController from './controllers/PostController';
+import userRoutes from './routes/user.route';
+import lotacaoRoutes from './routes/lotacao.route';
 
 const app = Express();
 app.use(Express.json());
-const PORT = 8000;
+const PORT = process.env.PORT || 3000;
 
-app.get('/', (request, response) => {
-  return response.send({ message: 'Hello World' });
+app.use('/user', userRoutes);
+app.use('/lotacao', lotacaoRoutes);
+
+
+const server = app.listen(PORT, () => {
+    console.log(`Server is running ${PORT}`);
 });
 
-app.post('/createUser', UserController.createUser);
-app.post('/createPost', PostController.createPost);
-app.get('/listPost/:id', PostController.listPost);
-app.put('/updatePost', PostController.updatePost);
-app.delete('/deletePost/:id', PostController.deletePost);
+export { server };
 
-app.listen(PORT, () => {
-  console.log(`Server is running ${PORT}`);
-});
+export default app;
