@@ -96,6 +96,47 @@ export default {
         }
     },
 
+    async mudancaSenha(request: Request, response: Response) {
+      try {
+        console.log('oi')
+        const { novaSenha, confirmacaoNovaSenha } = request.body;
+
+        if (!novaSenha || !confirmacaoNovaSenha) {
+            return response.status(400).send('Nova senha e confirmação da nova senha são obrigatórios.');
+        }
+        
+        if (novaSenha !== confirmacaoNovaSenha) {
+            return response.status(400).send('Nova senha e confirmação da nova senha devem ser iguais.');
+        }
+
+        const senhaCryptografada = encryptPassword(novaSenha);
+
+        const token = request.headers['Authorization']
+
+        const decoded = jwt.verify(token, 'segredo')
+
+        console.log(decoded)
+        const userId = decoded.id
+
+        console.log(userId)
+
+        const userUpdated = await prisma.user.update({
+            where: {
+                id: String(userId)
+            },
+            data: {
+                senha: senhaCryptografada
+            }
+        });
+
+        response.status(200).json({ message: 'Senha atualizada com sucesso!', userUpdated})
+
+
+      } catch(error) {
+        response.status(500).json({ error: error.message });
+      } 
+    },
+
 
     async  listUsers(request: Request, response: Response) {
         try {

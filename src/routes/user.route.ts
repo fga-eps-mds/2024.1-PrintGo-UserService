@@ -7,6 +7,7 @@ userRoutes.post('/create', UserController.createUser);
 userRoutes.get('/', UserController.listUsers);
 userRoutes.get('/:id', UserController.getUserById);
 userRoutes.patch('/:id', UserController.updateUser);
+userRoutes.patch('/change-password', UserController.mudancaSenha);
 userRoutes.post('/login', UserController.login);
 
 export default userRoutes;
