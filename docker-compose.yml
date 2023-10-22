@@ -17,23 +17,23 @@ services:
     networks:
       - printgo_network
 
-  # express-api:
-  #   restart: on-failure
-  #   build: .
-  #   environment:
-  #     DATABASE_URL: ${DATABASE_URL}
-  #     NODE_ENV: development
-  #     PORT: 8000
-  #   volumes:
-  #     - .:/src
-  #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     - postgres-db
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - printgo_network
+  express-api:
+    restart: on-failure
+    build: .
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      NODE_ENV: development
+      PORT: 8000
+    volumes:
+      - .:/src
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres-db
+    env_file:
+      - .env
+    networks:
+      - printgo_network
 
 volumes:
   postgres_data:
