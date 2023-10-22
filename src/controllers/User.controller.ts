@@ -72,18 +72,18 @@ export default {
     },
 
     async login(request: Request, response: Response) {
-         const { email, senha } = request.body;
+        const { email, senha } = request.body;
 
         const user = await prisma.user.findUnique({
             where: {
-                email: email,
+                email: String(email),
             },
         });
 
         if (user && bcrypt.compareSync(senha, user.senha)) {
             // Criar e assinar o token
             const token = jwt.sign({ email }, 'segredo', { expiresIn: '1h' });
-        
+
             response.json({ token });
         } else {
             response.status(401).json({ message: 'E-mail ou senha inválidos' });
