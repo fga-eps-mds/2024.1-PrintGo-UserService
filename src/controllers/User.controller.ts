@@ -98,31 +98,32 @@ export default {
 
     async mudancaSenha(request: Request, response: Response) {
       try {
-        console.log('oi')
         const { novaSenha, confirmacaoNovaSenha } = request.body;
 
         if (!novaSenha || !confirmacaoNovaSenha) {
-            return response.status(400).send('Nova senha e confirmação da nova senha são obrigatórios.');
+            return response.status(400).json({ message: 'Nova senha e confirmação da nova senha são obrigatórios.'});
         }
         
         if (novaSenha !== confirmacaoNovaSenha) {
-            return response.status(400).send('Nova senha e confirmação da nova senha devem ser iguais.');
+            return response.status(400).json({ message: 'Nova senha e confirmação da nova senha são obrigatórios.'});
         }
 
         const senhaCryptografada = encryptPassword(novaSenha);
 
-        const token = request.headers['Authorization']
+        const token = request.headers['authorization'];
+
+        if (!token) {
+            response.status(500)   
+        }
+
 
         const decoded = jwt.verify(token, 'segredo')
 
         console.log(decoded)
-        const userId = decoded.id
-
-        console.log(userId)
 
         const userUpdated = await prisma.user.update({
             where: {
-                id: String(userId)
+                email: String(decoded.email)
             },
             data: {
                 senha: senhaCryptografada
