@@ -1,11 +1,10 @@
 FROM node:18
 
-WORKDIR /app
+WORKDIR /src
 
-ENV PORT=3000
+ENV PORT=8000
 
 COPY ./package.json .
-COPY ./yarn.lock .
 RUN yarn install
 
 COPY . .
