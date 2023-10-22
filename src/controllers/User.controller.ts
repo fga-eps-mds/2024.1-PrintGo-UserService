@@ -3,6 +3,9 @@ import { prisma } from '../database';
 import { checkCpfOrCnpj } from '../middlewares/checkCpfOrCnpj.middleware';
 import { UserCreateInput } from '../types/User.type';
 import { encryptPassword } from '../adapters/bcrypt.adapter';
+import  jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+
 
 export default {
     async createUser(request: Request, response: Response) {
@@ -68,6 +71,25 @@ export default {
         }
     },
 
+    async login(request: Request, response: Response) {
+         const { email, senha } = request.body;
+
+        const user = await prisma.user.findUnique({
+            where: {
+                email: email,
+            },
+        });
+
+        if (user && bcrypt.compareSync(senha, user.senha)) {
+            // Criar e assinar o token
+            const token = jwt.sign({ email }, 'segredo', { expiresIn: '1h' });
+        
+            response.json({ token });
+        } else {
+            response.status(401).json({ message: 'E-mail ou senha inválidos' });
+        }
+    },
+
 
     async  listUsers(request: Request, response: Response) {
         try {
@@ -80,7 +102,6 @@ export default {
             });
         }
     },
-
 
     async getUserById(request: Request, response: Response) {
         try {
