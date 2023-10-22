@@ -80,10 +80,15 @@ export default {
                     email: email,
                 },
             });
+
+            const id = user.id
     
             if (user && bcrypt.compareSync(senha, user.senha)) {
                 // Criar e assinar o token
-                const token = jwt.sign({ email }, 'segredo', { expiresIn: '1h' });
+                const token = jwt.sign({
+                    id, 
+                    email 
+                }, 'segredo', { expiresIn: '1h' });
     
                 response.json({ token });
             } else {
@@ -116,14 +121,11 @@ export default {
             response.status(500)   
         }
 
-
         const decoded = jwt.verify(token, 'segredo')
-
-        console.log(decoded)
 
         const userUpdated = await prisma.user.update({
             where: {
-                email: String(decoded.email)
+                id: String(decoded.id)
             },
             data: {
                 senha: senhaCryptografada
