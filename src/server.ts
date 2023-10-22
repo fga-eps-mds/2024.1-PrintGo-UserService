@@ -1,10 +1,12 @@
 import Express from 'express';
 import userRoutes from './routes/user.route';
 import lotacaoRoutes from './routes/lotacao.route';
+import cors from 'cors';
 
 const app = Express();
 app.use(Express.json());
-const PORT = process.env.PORT || 3000;
+app.use(cors());
+const PORT = process.env.PORT || 8000;
 
 app.use('/user', userRoutes);
 app.use('/lotacao', lotacaoRoutes);
