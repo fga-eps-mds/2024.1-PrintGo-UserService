@@ -22,6 +22,7 @@ model User {
     id    String     @id @default(cuid())
     email String  @unique @db.VarChar(256)
     nome  String? @db.VarChar(256)
+    senha String @db.VarChar(64)
     documento String @db.VarChar(14)
     lotacao_id String @db.VarChar(256)
     impressoes Impressao[]

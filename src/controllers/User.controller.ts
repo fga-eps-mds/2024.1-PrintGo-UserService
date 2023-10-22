@@ -2,17 +2,33 @@ import { Request, Response } from 'express';
 import { prisma } from '../database';
 import { checkCpfOrCnpj } from '../middlewares/checkCpfOrCnpj.middleware';
 import { UserCreateInput } from '../types/User.type';
+import { encryptPassword } from '../adapters/bcrypt.adapter';
 
 export default {
     async createUser(request: Request, response: Response) {
         try {
-            const { nome, email, documento, lotacao_id, cargos } = request.body as UserCreateInput;
+            const { nome, email, senha, documento, lotacao_id, cargos } = request.body as UserCreateInput;
             const emailExist = await prisma.user.findUnique({ where: { email } });
+            const lotacaoExist = await prisma.lotacao.findUnique({ where: { id: lotacao_id } });
 
-            if(!checkCpfOrCnpj(documento)) {
+            if(!lotacaoExist) {
+                return response.status(400).json({
+                    error: true,
+                    message: 'Erro: Lotação não encontrada!'
+                });
+            }
+
+            if(!documento || !checkCpfOrCnpj(documento)) {
                 return response.status(400).json({
                     error: true,
                     message: 'Erro: CPF ou CNPJ inválido!'
+                });
+            }
+
+            if (!senha || senha.length < 8) {
+                return response.status(400).json({
+                    error: true,
+                    message: 'Erro: senha deve ter no mínimo 8 caracteres!'
                 });
             }
 
@@ -23,10 +39,13 @@ export default {
                 });
             }
 
+            const senhaCryptografada = encryptPassword(senha);
+
             const user = await prisma.user.create({
                 data: {
                     nome,
                     email,
+                    senha: senhaCryptografada,
                     documento,
                     lotacao_id,
                     cargos: {
@@ -103,6 +122,7 @@ export default {
                     });
                 }
             }
+
             const user = await prisma.user.findUnique({
                 where: { id: String(id) },
             });
