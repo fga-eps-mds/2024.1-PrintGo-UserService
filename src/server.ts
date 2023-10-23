@@ -11,7 +11,6 @@ const PORT = process.env.PORT || 8000;
 app.use('/user', userRoutes);
 app.use('/lotacao', lotacaoRoutes);
 
-
 const server = app.listen(PORT, () => {
     console.log(`Server is running ${PORT}`);
 });
