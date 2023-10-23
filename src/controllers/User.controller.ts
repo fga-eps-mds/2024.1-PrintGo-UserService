@@ -72,22 +72,72 @@ export default {
     },
 
     async login(request: Request, response: Response) {
-        const { email, senha } = request.body;
+        try {
+            const { email, senha } = request.body;
+    
+            const user = await prisma.user.findUnique({
+                where: {
+                    email: email,
+                },
+            });
 
-        const user = await prisma.user.findUnique({
+            const id = user.id
+    
+            if (user && bcrypt.compareSync(senha, user.senha)) {
+                // Criar e assinar o token
+                const token = jwt.sign({
+                    id, 
+                    email 
+                }, 'segredo', { expiresIn: '1h' });
+    
+                response.json({ token });
+            } else {
+                response.status(401).json({ message: 'E-mail ou senha inválidos' });
+            }
+        } catch (error) {
+            // Tratar o erro
+            console.error(error);
+            response.status(500).json({ message: 'Ocorreu um erro inesperado' });
+        }
+    },
+
+    async mudancaSenha(request: Request, response: Response) {
+      try {
+        const { novaSenha, confirmacaoNovaSenha } = request.body;
+
+        if (!novaSenha || !confirmacaoNovaSenha) {
+            return response.status(400).json({ message: 'Nova senha e confirmação da nova senha são obrigatórios.'});
+        }
+        
+        if (novaSenha !== confirmacaoNovaSenha) {
+            return response.status(400).json({ message: 'Nova senha e confirmação da nova senha são obrigatórios.'});
+        }
+
+        const senhaCryptografada = encryptPassword(novaSenha);
+
+        const token = request.headers['authorization'];
+
+        if (!token) {
+            response.status(500)   
+        }
+
+        const decoded = jwt.verify(token, 'segredo')
+
+        const userUpdated = await prisma.user.update({
             where: {
-                email: String(email),
+                id: String(decoded.id)
             },
+            data: {
+                senha: senhaCryptografada
+            }
         });
 
-        if (user && bcrypt.compareSync(senha, user.senha)) {
-            // Criar e assinar o token
-            const token = jwt.sign({ email }, 'segredo', { expiresIn: '1h' });
+        response.status(200).json({ message: 'Senha atualizada com sucesso!', userUpdated})
 
-            response.json({ token });
-        } else {
-            response.status(401).json({ message: 'E-mail ou senha inválidos' });
-        }
+
+      } catch(error) {
+        response.status(500).json({ error: error.message });
+      } 
     },
 
 

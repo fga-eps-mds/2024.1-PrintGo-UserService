@@ -10,7 +10,9 @@
     "lint:fix": "eslint  --ext .ts --fix",
     "db:pull": "npx prisma db pull",
     "db:push": "npx prisma db push --skip-generate",
-    "db:migrate": "npx prisma migrate dev --skip-generate"
+    "db:migrate": "npx prisma migrate dev --skip-generate",
+    "vercel-build": "npx prisma migrate deploy"
+
   },
   "repository": {
     "type": "git",
