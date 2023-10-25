@@ -6,7 +6,7 @@ export const checkCpfOrCnpj = (documento: string): boolean => {
     return documento.length === 11 ? checkCpf(documento) : checkCnpj(documento);
 };
 
-const checkCpf = (documento:string): boolean => {
+export const checkCpf = (documento:string): boolean => {
     let soma = 0;
     for (let i = 0; i < 9; i++) {
         soma += parseInt(documento.charAt(i)) * (10 - i);
@@ -42,6 +42,6 @@ const checkCpf = (documento:string): boolean => {
     return true;
 };
 
-const checkCnpj = (documento:string): boolean => {
+export const checkCnpj = (documento:string): boolean => {
     return documento ? false: true;
 };
