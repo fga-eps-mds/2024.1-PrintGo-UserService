@@ -122,6 +122,7 @@ export default {
 
             const decoded = jwt.verify(token, 'segredo');
 
+
             const userUpdated = await prisma.user.update({
                 where: {
                     id: String(decoded.id)
@@ -137,6 +138,7 @@ export default {
         } catch(error) {
             return response.status(500).json({ error: error.message });
         }
+
     },
 
 
