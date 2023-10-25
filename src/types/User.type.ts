@@ -1,6 +1,16 @@
 import { Cargo } from './enum/Cargos.enum';
 
-export type UserCreateInput= {
+export type UserCreateInput = {
+    nome: string;
+    email: string;
+    senha: string;
+    documento: string;
+    lotacao_id: string;
+    cargos: Cargo[];
+}
+
+export type UserCreateOutput = {
+    id: string;
     nome: string;
     email: string;
     senha: string;

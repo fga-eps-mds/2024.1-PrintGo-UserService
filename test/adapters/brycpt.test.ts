@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { encryptPassword } from '../src/adapters/bcrypt.adapter';
+import { encryptPassword } from '../../src/adapters/bcrypt.adapter';
 
 describe('encryptPassword', () => {
     it('deve retornar uma senha criptografada', () => {
