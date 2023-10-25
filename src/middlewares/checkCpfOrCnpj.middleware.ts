@@ -7,7 +7,7 @@ export const checkCpfOrCnpj = (documento: string): boolean => {
     return documento.length === 11 ? checkCpf(documento) : checkCnpj(documento);
 };
 
-const checkCpf = (documento:string): boolean => {
+export const checkCpf = (documento:string): boolean => {
     if (documento ===    '00000000000'
         || documento === '11111111111'
         || documento === '22222222222'
@@ -51,7 +51,7 @@ const checkCpf = (documento:string): boolean => {
     return true;
 };
 
-const checkCnpj = (documento:string): boolean => {
+export const checkCnpj = (documento:string): boolean => {
 
     if (documento === '') return false;
     if (documento.length !== 14) return false;
