@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../database';
 import { checkCpfOrCnpj } from '../middlewares/checkCpfOrCnpj.middleware';
-import { UserCreateInput } from '../types/User.type';
 import { encryptPassword } from '../adapters/bcrypt.adapter';
 import  jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
@@ -10,9 +9,11 @@ import bcrypt from 'bcryptjs';
 export default {
     async createUser(request: Request, response: Response) {
         try {
-            const { nome, email, senha, documento, lotacao_id, cargos } = request.body as UserCreateInput;
-            const emailExist = await prisma.user.findUnique({ where: { email } });
-            const lotacaoExist = await prisma.lotacao.findUnique({ where: { id: lotacao_id } });
+            const { nome, email, senha, documento, lotacao_id, cargos } = request.body;
+            const emailExist = await prisma.user.findUnique({ where: { email: String(email) } });
+            const lotacaoExist = await prisma.lotacao.findUnique({ where: { id: String(lotacao_id) } }).catch(err => {
+                console.error('Error querying lotacao:', err);
+            });
 
             if(!lotacaoExist) {
                 return response.status(400).json({
@@ -90,14 +91,12 @@ export default {
                     email
                 }, 'segredo', { expiresIn: '1h' });
 
-                response.json({ token });
+                return response.json({ token });
             } else {
-                response.status(401).json({ message: 'E-mail ou senha inválidos' });
+                return response.status(401).json({ message: 'E-mail ou senha inválidos' });
             }
         } catch (error) {
-            // Tratar o erro
-            console.error(error);
-            response.status(500).json({ message: 'Ocorreu um erro inesperado' });
+            return response.status(500).json({ message: 'Ocorreu um erro inesperado' });
         }
     },
 
@@ -118,7 +117,7 @@ export default {
             const token = request.headers['authorization'];
 
             if (!token) {
-                response.status(500);
+                return response.status(500);
             }
 
             const decoded = jwt.verify(token, 'segredo');
@@ -132,11 +131,11 @@ export default {
                 }
             });
 
-            response.status(200).json({ message: 'Senha atualizada com sucesso!', userUpdated});
+            return response.status(200).json({ message: 'Senha atualizada com sucesso!', userUpdated});
 
 
         } catch(error) {
-            response.status(500).json({ error: error.message });
+            return response.status(500).json({ error: error.message });
         }
     },
 
@@ -146,7 +145,7 @@ export default {
             const users = await prisma.user.findMany();
             return response.json(users);
         } catch (error) {
-            response.status(500).json({
+            return response.status(500).json({
                 error: true,
                 message: 'Erro: Ocorreu um erro ao buscar os Usuarios.'
             });
@@ -166,7 +165,7 @@ export default {
                     error: true,
                     message: 'Erro: Não foi possível encontrar o usuario.'});
         } catch (error) {
-            response.status(500).json({
+            return response.status(500).json({
                 error: true,
                 message: 'Erro: Ocorreu um erro ao buscar  o usuario por ID.' });
         }
@@ -216,7 +215,7 @@ export default {
 
 
         } catch (error) {
-            response.status(500).json({ error: error.message });
+            return response.status(500).json({ error: error.message });
         }
     },
 

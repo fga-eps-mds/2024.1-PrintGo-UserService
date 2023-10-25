@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import UserController from '../controllers/User.controller';
+import { requestHandler } from '../middlewares/requestWrapper.adapter';
 
 const userRoutes = Router();
 
-userRoutes.post('/create', UserController.createUser);
-userRoutes.get('/', UserController.listUsers);
-userRoutes.get('/:id', UserController.getUserById);
-userRoutes.patch('/:id', UserController.updateUser);
-userRoutes.post('/change-password', UserController.mudancaSenha);
-userRoutes.post('/login', UserController.login);
+userRoutes.post('/create', requestHandler(UserController.createUser));
+userRoutes.get('/', requestHandler(UserController.listUsers));
+userRoutes.get('/:id', requestHandler(UserController.getUserById));
+userRoutes.patch('/:id', requestHandler(UserController.updateUser));
+userRoutes.post('/change-password', requestHandler(UserController.mudancaSenha));
+userRoutes.post('/login', requestHandler(UserController.login));
 
 export default userRoutes;
