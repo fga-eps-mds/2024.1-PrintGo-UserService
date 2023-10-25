@@ -7,8 +7,7 @@ export const checkCpfOrCnpj = (documento: string): boolean => {
     return documento.length === 11 ? checkCpf(documento) : checkCnpj(documento);
 };
 
-
-export const checkCpf = (documento:string): boolean => {
+const checkCpf = (documento:string): boolean => {
     if (documento ===    '00000000000'
         || documento === '11111111111'
         || documento === '22222222222'
@@ -21,8 +20,6 @@ export const checkCpf = (documento:string): boolean => {
         || documento === '99999999999')
         return false;
 
-
-export const checkCpf = (documento:string): boolean => {
     let soma = 0;
     for (let i = 0; i < 9; i++) {
         soma += parseInt(documento.charAt(i)) * (10 - i);
@@ -54,8 +51,7 @@ export const checkCpf = (documento:string): boolean => {
     return true;
 };
 
-
-export const checkCnpj = (documento:string): boolean => {
+const checkCnpj = (documento:string): boolean => {
 
     if (documento === '') return false;
     if (documento.length !== 14) return false;
@@ -100,8 +96,4 @@ export const checkCnpj = (documento:string): boolean => {
     if (resultado !== parseInt(digitos.charAt(1))) return false;
 
     return true;
-
-export const checkCnpj = (documento:string): boolean => {
-    return documento ? false: true;
-
 };
