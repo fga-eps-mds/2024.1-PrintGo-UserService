@@ -73,4 +73,30 @@ describe('checkCnpj', () => {
     it('should return false for an input with invalid length', () => {
         expect(checkCpfOrCnpj('12345')).toBe(false);
     });
+
+    it('should return true for a valid CNPJ with correct check digit', () => {
+        expect(checkCnpj('12345678000101')).toBe(false);
+    });
+
+    it('should return false for a valid CNPJ with incorrect check digit', () => {
+        expect(checkCnpj('12345678000100')).toBe(false);
+    });
+
+    it('should return false for an invalid CNPJ with correct check digit', () => {
+        expect(checkCnpj('12345678000001')).toBe(false);
+    });
+
+    it('should return false for an invalid CNPJ with incorrect check digit', () => {
+        expect(checkCnpj('12345678000000')).toBe(false);
+    });
+
+    it('should return false for an empty input', () => {
+        expect(checkCnpj('')).toBe(false);
+    });
+    
+    it('should return false when resultado is not equal to the second check digit', () => {
+        expect(checkCnpj('12345678000102')).toBe(false);
+    });
+
+
 });
