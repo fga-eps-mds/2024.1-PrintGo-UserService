@@ -40,7 +40,7 @@ export default {
 
             return response.status(201).json({
                 message: 'Sucesso: Lotação cadastrada com sucesso!',
-                lotacao
+                data: lotacao
             });
 
         } catch (error) {
@@ -51,9 +51,9 @@ export default {
     async  listLotacoes(request: Request, response: Response) {
         try {
             const lotacoes = await prisma.lotacao.findMany();
-            response.json(lotacoes);
+            return response.json(lotacoes);
         } catch (error) {
-            response.status(500).json({
+            return response.status(500).json({
                 error: true,
                 message: 'Erro: Ocorreu um erro ao buscar as Lotações.'
             });
@@ -69,13 +69,13 @@ export default {
             });
 
             return lotacao?
-                response.json(lotacao):
+                response.json({data: lotacao}):
                 response.status(404).json({
                     error: true,
                     message: 'Erro: Não foi possível encontrar a lotação.'
                 });
         } catch (error) {
-            response.status(500).json({
+            return response.status(500).json({
                 error: true,
                 message: 'Erro: Ocorreu um erro ao buscar  a lotação por ID.'
             });
