@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { prisma } from '../database';
 import { LotacaoCreateInput } from '../types/Lotacao.type';
+import { ResponseCreateLotacao } from '../types/Response.type';
 
 export default {
-    async createLotacao(request: Request, response: Response) {
+    async createLotacao(request: Request, response: Response): Promise<ResponseCreateLotacao> {
         try {
             const {
                 nome,
@@ -40,7 +41,7 @@ export default {
 
             return response.status(201).json({
                 message: 'Sucesso: Lotação cadastrada com sucesso!',
-                lotacao
+                data: lotacao
             });
 
         } catch (error) {
@@ -51,7 +52,7 @@ export default {
     async  listLotacoes(request: Request, response: Response) {
         try {
             const lotacoes = await prisma.lotacao.findMany();
-            response.json(lotacoes);
+            response.json({ data: lotacoes });
         } catch (error) {
             response.status(500).json({
                 error: true,

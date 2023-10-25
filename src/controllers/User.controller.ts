@@ -60,7 +60,7 @@ export default {
 
             return response.status(201).json({
                 message: 'Sucesso: Usuário cadastrado com sucesso!',
-                user
+                data: user
             });
 
         } catch (error) {
@@ -74,22 +74,22 @@ export default {
     async login(request: Request, response: Response) {
         try {
             const { email, senha } = request.body;
-    
+
             const user = await prisma.user.findUnique({
                 where: {
                     email: email,
                 },
             });
 
-            const id = user.id
-    
+            const id = user.id;
+
             if (user && bcrypt.compareSync(senha, user.senha)) {
                 // Criar e assinar o token
                 const token = jwt.sign({
-                    id, 
-                    email 
+                    id,
+                    email
                 }, 'segredo', { expiresIn: '1h' });
-    
+
                 response.json({ token });
             } else {
                 response.status(401).json({ message: 'E-mail ou senha inválidos' });
@@ -102,42 +102,42 @@ export default {
     },
 
     async mudancaSenha(request: Request, response: Response) {
-      try {
-        const { novaSenha, confirmacaoNovaSenha } = request.body;
+        try {
+            const { novaSenha, confirmacaoNovaSenha } = request.body;
 
-        if (!novaSenha || !confirmacaoNovaSenha) {
-            return response.status(400).json({ message: 'Nova senha e confirmação da nova senha são obrigatórios.'});
-        }
-        
-        if (novaSenha !== confirmacaoNovaSenha) {
-            return response.status(400).json({ message: 'Nova senha e confirmação da nova senha são obrigatórios.'});
-        }
-
-        const senhaCryptografada = encryptPassword(novaSenha);
-
-        const token = request.headers['authorization'];
-
-        if (!token) {
-            response.status(500)   
-        }
-
-        const decoded = jwt.verify(token, 'segredo')
-
-        const userUpdated = await prisma.user.update({
-            where: {
-                id: String(decoded.id)
-            },
-            data: {
-                senha: senhaCryptografada
+            if (!novaSenha || !confirmacaoNovaSenha) {
+                return response.status(400).json({ message: 'Nova senha e confirmação da nova senha são obrigatórios.'});
             }
-        });
 
-        response.status(200).json({ message: 'Senha atualizada com sucesso!', userUpdated})
+            if (novaSenha !== confirmacaoNovaSenha) {
+                return response.status(400).json({ message: 'Nova senha e confirmação da nova senha são obrigatórios.'});
+            }
+
+            const senhaCryptografada = encryptPassword(novaSenha);
+
+            const token = request.headers['authorization'];
+
+            if (!token) {
+                response.status(500);
+            }
+
+            const decoded = jwt.verify(token, 'segredo');
+
+            const userUpdated = await prisma.user.update({
+                where: {
+                    id: String(decoded.id)
+                },
+                data: {
+                    senha: senhaCryptografada
+                }
+            });
+
+            response.status(200).json({ message: 'Senha atualizada com sucesso!', userUpdated});
 
 
-      } catch(error) {
-        response.status(500).json({ error: error.message });
-      } 
+        } catch(error) {
+            response.status(500).json({ error: error.message });
+        }
     },
 
 
