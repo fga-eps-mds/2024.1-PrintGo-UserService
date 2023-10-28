@@ -1,7 +1,8 @@
 version: "3.1"
 
 services:
-  postgres-db:
+  database:
+    container_name: printgo-database
     image: postgres
     restart: always
     environment:
@@ -9,7 +10,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - printgo_database:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     env_file:
@@ -17,27 +18,35 @@ services:
     networks:
       - printgo_network
 
-  # express-api:
-  #   restart: on-failure
-  #   build: .
-  #   environment:
-  #     DATABASE_URL: ${DATABASE_URL}
-  #     NODE_ENV: development
-  #     PORT: 8000
-  #   volumes:
-  #     - .:/src
-  #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     - postgres-db
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - printgo_network
+  api:
+    container_name: printgo-user-service
+    restart: on-failure
+    build: .
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      NODE_ENV: development
+      PORT: 8000
+    volumes:
+      - .:/src
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    env_file:
+      - .env
+    networks:
+      - printgo_network
+    command: >
+      bash -c '
+        ./startdb.sh
+        yarn start
+      '
 
 volumes:
-  postgres_data:
+  printgo_database:
 
 networks:
     printgo_network:
         driver: bridge
+        driver_opts:
+            com.docker.network.bridge.enable_icc: "true"
