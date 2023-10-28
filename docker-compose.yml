@@ -6,8 +6,9 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - printgo_database:/var/lib/postgresql/data
     ports:
@@ -19,8 +20,8 @@ services:
 
   api:
     container_name: printgo-user-service
-    build: .
     restart: on-failure
+    build: .
     environment:
       DATABASE_URL: ${DATABASE_URL}
       NODE_ENV: development
@@ -35,6 +36,11 @@ services:
       - .env
     networks:
       - printgo_network
+    command: >
+      bash -c '
+        ./startdb.sh
+        yarn start
+      '
 
 volumes:
   printgo_database:

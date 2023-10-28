@@ -9,7 +9,4 @@ RUN yarn install
 
 COPY . .
 
-RUN ./startdb.sh
-
 EXPOSE $PORT
-CMD [ "yarn", "start" ]

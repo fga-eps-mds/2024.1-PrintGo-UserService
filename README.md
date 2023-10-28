@@ -41,16 +41,7 @@ yarn
     #ou
 npm i
 
-###
-# crie um arquivo no diretorio root chamado .env
-# nele sera necessario a definição das seguintes variaveis para testar localmente
-#
-# POSTGRES_USER="postgres"
-# POSTGRES_PASSWORD="postgres"
-# POSTGRES_DB="postgres"
-# DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
-#
-###
+cp .env.dev .env
 
 # Rode o docker compose do projeto
 docker-compose up --build
