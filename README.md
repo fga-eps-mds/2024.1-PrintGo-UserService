@@ -69,3 +69,6 @@ Para contribuir com esse projeto é importante seguir nosso [Guia de Contribuiç
 
 - [Back-End: UserService](https://github.com/fga-eps-mds/2023.2-PrintGo-UserService)
 
+- [Back-End: OcurrenceService](https://github.com/fga-eps-mds/2023.2-PrintGo-OcurrenceService)
+
+- [Back-End: PrinterService](https://github.com/fga-eps-mds/2023.2-PrintGo-PrinterService)
