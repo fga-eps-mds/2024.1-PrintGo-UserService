@@ -38,7 +38,8 @@ services:
       - printgo_network
     command: >
       bash -c '
-        ./startdb.sh
+        yarn db:generate
+        yarn db:push
         yarn start
       '
 
