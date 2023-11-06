@@ -13,8 +13,20 @@ export default {
                 bairro,
                 cidade,
                 cep,
+                unidade_pai_id,
                 numero
             } = request.body as LotacaoCreateInput;
+
+            const policieUnit = await prisma.unidade_Policia.findUnique({ where: { id: String(unidade_pai_id) } }).catch(err => {
+                console.error('Error querying unidade policia:', err);
+            });
+
+            if(!policieUnit) {
+                return response.status(400).json({
+                    error: true,
+                    message: 'Erro: Unidade de policia não encontrada!'
+                });
+            }
 
             const lotacaoExist = await prisma.lotacao.findUnique({ where: { nome } });
 
@@ -34,6 +46,7 @@ export default {
                     bairro,
                     cidade,
                     cep,
+                    unidade_pai_id,
                     numero
                 }
             });

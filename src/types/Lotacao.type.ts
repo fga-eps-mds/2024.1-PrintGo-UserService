@@ -6,6 +6,7 @@ export type LotacaoCreateInput = {
     bairro: string;
     cidade: string;
     cep: string;
+    unidade_pai_id: string;
     numero: number;
 }
 
@@ -19,4 +20,5 @@ export type LotacaoCreateOutput = {
     cidade: string;
     cep: string;
     numero: number;
+    unidade_pai_id: string;
 }
