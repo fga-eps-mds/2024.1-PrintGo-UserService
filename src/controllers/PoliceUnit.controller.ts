@@ -9,7 +9,7 @@ export default {
                 nome,
             } = request.body as PoliceUnitCreateInput;
 
-            const PoliceUnitExist = await prisma.unidade_Policia.findMany({ where: { nome } });
+            const PoliceUnitExist = await prisma.unidade_Policia.findUnique({ where: { nome } });
 
             if (PoliceUnitExist) {
                 return response.status(400).json({
@@ -20,7 +20,7 @@ export default {
 
             const policeUnit = await prisma.unidade_Policia.create({
                 data: {
-                    nome  
+                    nome
                 }
             });
 
@@ -32,6 +32,17 @@ export default {
         } catch (error) {
             return response.json({ error: true, message: error.message });
         }
+    },
+
+    async listPoliceUnits(request: Request, response: Response) {
+        try {
+            const policeUnit = await prisma.unidade_Policia.findMany();
+            return response.json(policeUnit);
+        } catch (error) {
+            return response.status(500).json({
+                error: true,
+                message: 'Erro: Ocorreu um erro ao buscar as Lotações.'
+            });
+        }
     }
 };
-    
