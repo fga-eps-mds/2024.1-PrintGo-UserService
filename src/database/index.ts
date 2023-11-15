@@ -1,5 +1,4 @@
-import { PrismaClient }  from '@fernandes-natanael/printgo-prisma';
-
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
