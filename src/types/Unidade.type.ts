@@ -1,4 +1,4 @@
-export type LotacaoCreateInput = {
+export type UnidadeCreateInput = {
     nome: string;
     rua: string;
     logradouro: string;
@@ -7,9 +7,10 @@ export type LotacaoCreateInput = {
     cidade: string;
     cep: string;
     numero: number;
+    id_referencia_schedule: string;
 }
 
-export type LotacaoCreateOutput = {
+export type UnidadeCreateOutput = {
     id: string;
     nome: string;
     rua: string;
@@ -19,4 +20,5 @@ export type LotacaoCreateOutput = {
     cidade: string;
     cep: string;
     numero: number;
+    id_referencia_schedule: string;
 }

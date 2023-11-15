@@ -1,34 +1,34 @@
 import { Request, Response } from 'express';
 import { prisma } from '../database';
-import { LotacaoCreateInput } from '../types/Lotacao.type';
+import { UnidadeCreateInput } from '../types/Unidade.type';
 
 export default {
-    async createLotacao(request: Request, response: Response) {
+    async createUnidade(request: Request, response: Response) {
         try {
             const {
                 nome,
-                rua,
+                id_referencia_schedule,
                 logradouro,
                 complemento,
                 bairro,
                 cidade,
                 cep,
                 numero
-            } = request.body as LotacaoCreateInput;
+            } = request.body as UnidadeCreateInput;
 
-            const lotacaoExist = await prisma.lotacao.findUnique({ where: { nome } });
+            const unidadeExist = await prisma.unidade.findUnique({ where: { nome } });
 
-            if (lotacaoExist) {
+            if (unidadeExist) {
                 return response.status(400).json({
                     error: true,
-                    message: 'Erro: Lotação já existe!'
+                    message: 'Erro: Unidade já existe!'
                 });
             }
 
-            const lotacao = await prisma.lotacao.create({
+            const lotacao = await prisma.unidade.create({
                 data: {
                     nome,
-                    rua,
+                    id_referencia_schedule,
                     logradouro,
                     complemento,
                     bairro,
@@ -39,7 +39,7 @@ export default {
             });
 
             return response.status(201).json({
-                message: 'Sucesso: Lotação cadastrada com sucesso!',
+                message: 'Sucesso: Unidade cadastrada com sucesso!',
                 data: lotacao
             });
 
@@ -48,23 +48,23 @@ export default {
         }
     },
 
-    async  listLotacoes(request: Request, response: Response) {
+    async  listUnidades(request: Request, response: Response) {
         try {
-            const lotacoes = await prisma.lotacao.findMany();
+            const lotacoes = await prisma.unidade.findMany();
             return response.json(lotacoes);
         } catch (error) {
             return response.status(500).json({
                 error: true,
-                message: 'Erro: Ocorreu um erro ao buscar as Lotações.'
+                message: 'Erro: Ocorreu um erro ao buscar as Unidades.'
             });
         }
     },
 
-    async getLotacaoById(request: Request, response: Response) {
+    async getUnidadeById(request: Request, response: Response) {
         const { id } = request.params;
 
         try {
-            const lotacao = await prisma.lotacao.findUnique({
+            const lotacao = await prisma.unidade.findUnique({
                 where: { id: String(id) },
             });
 
@@ -72,12 +72,12 @@ export default {
                 response.json({data: lotacao}):
                 response.status(404).json({
                     error: true,
-                    message: 'Erro: Não foi possível encontrar a lotação.'
+                    message: 'Erro: Não foi possível encontrar a Unidade.'
                 });
         } catch (error) {
             return response.status(500).json({
                 error: true,
-                message: 'Erro: Ocorreu um erro ao buscar  a lotação por ID.'
+                message: 'Erro: Ocorreu um erro ao buscar  a Unidade por ID.'
             });
         }
     },

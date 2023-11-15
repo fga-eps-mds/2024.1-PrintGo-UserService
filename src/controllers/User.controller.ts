@@ -9,16 +9,16 @@ import bcrypt from 'bcryptjs';
 export default {
     async createUser(request: Request, response: Response) {
         try {
-            const { nome, email, senha, documento, lotacao_id, cargos } = request.body;
+            const { nome, email, senha, documento, unidade_id , cargos } = request.body;
             const emailExist = await prisma.user.findUnique({ where: { email: String(email) } });
-            const lotacaoExist = await prisma.lotacao.findUnique({ where: { id: String(lotacao_id) } }).catch(err => {
-                console.error('Error querying lotacao:', err);
+            const unidadeExist = await prisma.unidade.findUnique({ where: { id: String(unidade_id ) } }).catch(err => {
+                console.error('Error querying unidade:', err);
             });
 
-            if(!lotacaoExist) {
+            if(!unidadeExist) {
                 return response.status(400).json({
                     error: true,
-                    message: 'Erro: Lotação não encontrada!'
+                    message: 'Erro: Unidade não encontrada!'
                 });
             }
 
@@ -51,7 +51,7 @@ export default {
                     email,
                     senha: senhaCryptografada,
                     documento,
-                    lotacao_id,
+                    unidade_id ,
                     cargos: {
                         set: cargos
                     }
@@ -185,12 +185,12 @@ export default {
                 });
             }
 
-            if(userInput.lotacao_id) {
-                const lotacaoExist = await prisma.lotacao.findUnique({ where: { id: String(userInput.lotacao_id) } });
-                if (!lotacaoExist) {
+            if(userInput.unidade_id ) {
+                const unidadeExist = await prisma.unidade.findUnique({ where: { id: String(userInput.unidade_id ) } });
+                if (!unidadeExist) {
                     return response.status(400).json({
                         error: true,
-                        message: 'Erro: Lotação não encontrada!'
+                        message: 'Erro: Unidade não encontrada!'
                     });
                 }
             }
