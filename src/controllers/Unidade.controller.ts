@@ -7,7 +7,6 @@ export default {
         try {
             const {
                 nome,
-                id_referencia_schedule,
                 logradouro,
                 complemento,
                 bairro,
@@ -28,7 +27,6 @@ export default {
             const lotacao = await prisma.unidade.create({
                 data: {
                     nome,
-                    id_referencia_schedule,
                     logradouro,
                     complemento,
                     bairro,

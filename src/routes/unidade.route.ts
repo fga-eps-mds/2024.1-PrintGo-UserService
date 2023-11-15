@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import LotacaoController from '../controllers/Unidade.controller';
+import UnidadeController from '../controllers/Unidade.controller';
 import { requestHandler } from '../middlewares/requestWrapper.adapter';
 
 const unidadeRoutes = Router();
-unidadeRoutes.post('/create', requestHandler(LotacaoController.createUnidade));
-unidadeRoutes.get('/', requestHandler(LotacaoController.listUnidades));
-unidadeRoutes.get('/:id', requestHandler(LotacaoController.getUnidadeById));
+unidadeRoutes.post('/create', requestHandler(UnidadeController.createUnidade));
+unidadeRoutes.get('/', requestHandler(UnidadeController.listUnidades));
+unidadeRoutes.get('/:id', requestHandler(UnidadeController.getUnidadeById));
 
 export default unidadeRoutes;

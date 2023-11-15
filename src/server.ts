@@ -9,7 +9,7 @@ app.use(cors());
 const PORT = process.env.PORT || 8000;
 
 app.use('/user', userRoutes);
-app.use('/lotacao', unidadeRoutes);
+app.use('/unidade', unidadeRoutes);
 
 const server = app.listen(PORT, () => {
     console.log(`Server is running ${PORT}`);

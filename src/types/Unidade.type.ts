@@ -7,7 +7,6 @@ export type UnidadeCreateInput = {
     cidade: string;
     cep: string;
     numero: number;
-    id_referencia_schedule: string;
 }
 
 export type UnidadeCreateOutput = {
@@ -20,5 +19,4 @@ export type UnidadeCreateOutput = {
     cidade: string;
     cep: string;
     numero: number;
-    id_referencia_schedule: string;
 }

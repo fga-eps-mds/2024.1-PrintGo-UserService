@@ -11,16 +11,6 @@ export default {
         try {
             const { nome, email, senha, documento, unidade_id , cargos } = request.body;
             const emailExist = await prisma.user.findUnique({ where: { email: String(email) } });
-            const unidadeExist = await prisma.unidade.findUnique({ where: { id: String(unidade_id ) } }).catch(err => {
-                console.error('Error querying unidade:', err);
-            });
-
-            if(!unidadeExist) {
-                return response.status(400).json({
-                    error: true,
-                    message: 'Erro: Unidade não encontrada!'
-                });
-            }
 
             if(!documento || !checkCpfOrCnpj(documento)) {
                 return response.status(400).json({
@@ -185,15 +175,6 @@ export default {
                 });
             }
 
-            if(userInput.unidade_id ) {
-                const unidadeExist = await prisma.unidade.findUnique({ where: { id: String(userInput.unidade_id ) } });
-                if (!unidadeExist) {
-                    return response.status(400).json({
-                        error: true,
-                        message: 'Erro: Unidade não encontrada!'
-                    });
-                }
-            }
 
             const user = await prisma.user.findUnique({
                 where: { id: String(id) },
