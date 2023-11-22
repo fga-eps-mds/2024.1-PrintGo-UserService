@@ -31,20 +31,6 @@ model User {
     @@map("users")
 }
 
-model Lotacao {
-    id String @id @default(cuid())
-    nome String @unique @db.VarChar(256)
-    rua String @db.VarChar(256)
-    logradouro String @db.VarChar(256)
-    complemento String @db.VarChar(256)
-    bairro String @db.VarChar(256)
-    cidade String @db.VarChar(256)
-    cep String @db.VarChar(256)
-    numero Int
-    usuarios User[]
-    @@map("lotacoes")
-}
-
 model Impressora {
     id String @id @default(cuid())
     endereco_ip String @db.VarChar(256)
@@ -67,4 +53,27 @@ model Impressao {
     user User @relation(fields: [user_id], references: [id])
     impressora Impressora @relation(fields: [impressora_id], references: [id])
     @@map("impressoes")
+}
+
+model Lotacao {
+    id String @id @default(cuid())
+    nome String @unique @db.VarChar(256)
+    rua String @db.VarChar(256)
+    logradouro String @db.VarChar(256)
+    complemento String @db.VarChar(256)
+    bairro String @db.VarChar(256)
+    cidade String @db.VarChar(256)
+    cep String @db.VarChar(256)
+    numero Int
+    unidade_pai_id String
+    unidade_pai  Unidade_Policia @relation(fields: [unidade_pai_id], references: [id])
+    usuarios User[]
+
+    @@map("lotacoes")
+}
+
+model Unidade_Policia {
+    id String @id @default(cuid())
+    nome String @unique @db.VarChar(256)
+    lotacoes Lotacao[]
 }
