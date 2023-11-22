@@ -1,12 +1,12 @@
 export type UnidadeCreateInput = {
     nome: string;
-    rua: string;
-    logradouro: string;
-    complemento: string;
-    bairro: string;
-    cidade: string;
-    cep: string;
-    numero: number;
+    id_unidade_referencia: string;
+    logradouro?: string;
+    complemento?: string;
+    bairro?: string;
+    cidade?: string;
+    cep?: string;
+    numero?: number;
 }
 
 export type UnidadeCreateOutput = {
@@ -19,4 +19,5 @@ export type UnidadeCreateOutput = {
     cidade: string;
     cep: string;
     numero: number;
+    unidade_pai_id: string;
 }

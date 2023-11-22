@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import { prisma } from '../database';
 import { UnidadeCreateInput } from '../types/Unidade.type';
+import { getWorkstations } from '../services/externals/schedula.service';
 
 export default {
     async createUnidade(request: Request, response: Response) {
         try {
             const {
                 nome,
+                id_unidade_referencia,
                 logradouro,
                 complemento,
                 bairro,
@@ -15,18 +17,27 @@ export default {
                 numero
             } = request.body as UnidadeCreateInput;
 
-            const unidadeExist = await prisma.unidade.findUnique({ where: { nome } });
+            const unidadeExist = await prisma.unidade.findUnique({ where: { nome }});
+            const unidadeDuplicated = await prisma.unidade.findMany({ where: { id_unidade_referencia: String(id_unidade_referencia)} });
 
-            if (unidadeExist) {
+            if (unidadeExist || unidadeDuplicated && unidadeDuplicated.length > 0) {
                 return response.status(400).json({
                     error: true,
                     message: 'Erro: Unidade já existe!'
                 });
             }
 
+            const response_schedula = await getWorkstations(id_unidade_referencia);
+            if(response_schedula.error) {
+                return response.status(400).json({
+                    error: true,
+                    message: response_schedula.message
+                });
+            }
             const lotacao = await prisma.unidade.create({
                 data: {
                     nome,
+                    id_unidade_referencia,
                     logradouro,
                     complemento,
                     bairro,

@@ -1,16 +1,18 @@
+import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import { encryptPassword } from '../adapters/bcrypt.adapter';
 import { prisma } from '../database';
 import { checkCpfOrCnpj } from '../middlewares/checkCpfOrCnpj.middleware';
-import { encryptPassword } from '../adapters/bcrypt.adapter';
-import  jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import { getWorkstations } from '../services/externals/schedula.service';
 
 
 export default {
     async createUser(request: Request, response: Response) {
         try {
             const { nome, email, senha, documento, unidade_id , cargos } = request.body;
-            const emailExist = await prisma.user.findUnique({ where: { email: String(email) } });
+
+            let unidadeCriada = undefined;
 
             if(!documento || !checkCpfOrCnpj(documento)) {
                 return response.status(400).json({
@@ -26,12 +28,35 @@ export default {
                 });
             }
 
+            const emailExist = await prisma.user.findUnique({ where: { email: String(email) } });
+
             if (emailExist) {
                 return response.status(400).json({
                     error: true,
                     message: 'Erro: Já existe usuário com esse email!'
                 });
             }
+
+            const unidadeExist = await prisma.unidade.findMany({ where: { id_unidade_referencia: String(unidade_id) } });
+
+            if(unidadeExist && unidadeExist.length <= 0) {
+                const unidade = await getWorkstations(unidade_id);
+                if(unidade.error) {
+                    return response.status(400).json({
+                        error: true,
+                        message: unidade.message
+                    });
+                }else {
+                    unidadeCriada = await prisma.unidade.create({
+                        data: {
+                            nome: unidade.data.name,
+                            id_unidade_referencia: unidade_id,
+                        }
+                    });
+                }
+            }
+
+            const unidade_usuario = unidadeCriada ? unidadeCriada.id : unidadeExist[0].id;
 
             const senhaCryptografada = encryptPassword(senha);
 
@@ -41,7 +66,7 @@ export default {
                     email,
                     senha: senhaCryptografada,
                     documento,
-                    unidade_id ,
+                    unidade_id: unidade_usuario ,
                     cargos: {
                         set: cargos
                     }
