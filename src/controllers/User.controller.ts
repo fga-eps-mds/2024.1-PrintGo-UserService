@@ -12,8 +12,6 @@ export default {
         try {
             const { nome, email, senha, documento, unidade_id , cargos } = request.body;
 
-            let unidadeCriada = undefined;
-
             if(!documento || !checkCpfOrCnpj(documento)) {
                 return response.status(400).json({
                     error: true,
@@ -37,26 +35,14 @@ export default {
                 });
             }
 
-            const unidadeExist = await prisma.unidade.findMany({ where: { id_unidade_referencia: String(unidade_id) } });
+            const unidade = await getWorkstations(unidade_id);
 
-            if(unidadeExist && unidadeExist.length <= 0) {
-                const unidade = await getWorkstations(unidade_id);
-                if(unidade.error) {
-                    return response.status(400).json({
-                        error: true,
-                        message: unidade.message
-                    });
-                }else {
-                    unidadeCriada = await prisma.unidade.create({
-                        data: {
-                            nome: unidade.data.name,
-                            id_unidade_referencia: unidade_id,
-                        }
-                    });
-                }
+            if(unidade.error) {
+                return response.status(400).json({
+                    error: true,
+                    message: unidade.message
+                });
             }
-
-            const unidade_usuario = unidadeCriada ? unidadeCriada.id : unidadeExist[0].id;
 
             const senhaCryptografada = encryptPassword(senha);
 
@@ -66,7 +52,7 @@ export default {
                     email,
                     senha: senhaCryptografada,
                     documento,
-                    unidade_id: unidade_usuario ,
+                    unidade_id,
                     cargos: {
                         set: cargos
                     }
