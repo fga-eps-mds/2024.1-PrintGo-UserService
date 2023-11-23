@@ -1,26 +1,16 @@
+import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import { encryptPassword } from '../adapters/bcrypt.adapter';
 import { prisma } from '../database';
 import { checkCpfOrCnpj } from '../middlewares/checkCpfOrCnpj.middleware';
-import { encryptPassword } from '../adapters/bcrypt.adapter';
-import  jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import { getWorkstations } from '../services/externals/schedula.service';
 
 
 export default {
     async createUser(request: Request, response: Response) {
         try {
-            const { nome, email, senha, documento, lotacao_id, cargos } = request.body;
-            const emailExist = await prisma.user.findUnique({ where: { email: String(email) } });
-            const lotacaoExist = await prisma.lotacao.findUnique({ where: { id: String(lotacao_id) } }).catch(err => {
-                console.error('Error querying lotacao:', err);
-            });
-
-            if(!lotacaoExist) {
-                return response.status(400).json({
-                    error: true,
-                    message: 'Erro: Lotação não encontrada!'
-                });
-            }
+            const { nome, email, senha, documento, unidade_id , cargos } = request.body;
 
             if(!documento || !checkCpfOrCnpj(documento)) {
                 return response.status(400).json({
@@ -36,10 +26,21 @@ export default {
                 });
             }
 
+            const emailExist = await prisma.user.findUnique({ where: { email: String(email) } });
+
             if (emailExist) {
                 return response.status(400).json({
                     error: true,
                     message: 'Erro: Já existe usuário com esse email!'
+                });
+            }
+
+            const unidade = await getWorkstations(unidade_id);
+
+            if(unidade.error) {
+                return response.status(400).json({
+                    error: true,
+                    message: unidade.message
                 });
             }
 
@@ -51,7 +52,7 @@ export default {
                     email,
                     senha: senhaCryptografada,
                     documento,
-                    lotacao_id,
+                    unidade_id,
                     cargos: {
                         set: cargos
                     }
@@ -185,15 +186,6 @@ export default {
                 });
             }
 
-            if(userInput.lotacao_id) {
-                const lotacaoExist = await prisma.lotacao.findUnique({ where: { id: String(userInput.lotacao_id) } });
-                if (!lotacaoExist) {
-                    return response.status(400).json({
-                        error: true,
-                        message: 'Erro: Lotação não encontrada!'
-                    });
-                }
-            }
 
             const user = await prisma.user.findUnique({
                 where: { id: String(id) },
