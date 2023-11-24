@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const api = axios.create({
-    baseURL: process.env.SCHEDULA_API_URL,
+    baseURL: process.env.APIGATEWAY_API_URL,
     timeout: 5000,
     headers: {
         'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ type WorkstationOutputType = {
 
 export const getWorkstations = async (id) => {
     try {
-        const response = await api.get(`/workstations/${id}`);
+        const response = await api.get(`/schedular/workstations/${id}`);
 
         if(response.status !== 200) {
             return {error:true, message: 'Não foi possível encontrar Unidade no servico Schedula'};
