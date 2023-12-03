@@ -83,13 +83,15 @@ export default {
                 },
             });
 
-            const id = user.id;
+            const {id, nome} = user;
+            
 
             if (user && bcrypt.compareSync(senha, user.senha)) {
                 // Criar e assinar o token
                 const token = jwt.sign({
                     id,
-                    email
+                    email,
+                    nome
                 }, 'segredo', { expiresIn: '1h' });
 
                 return response.json({ token });
