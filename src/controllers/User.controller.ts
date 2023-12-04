@@ -4,13 +4,19 @@ import jwt from 'jsonwebtoken';
 import { encryptPassword } from '../adapters/bcrypt.adapter';
 import { prisma } from '../database';
 import { checkCpfOrCnpj } from '../middlewares/checkCpfOrCnpj.middleware';
-import { getWorkstations } from '../services/externals/schedula.service';
 
 
 export default {
     async createUser(request: Request, response: Response) {
         try {
-            const { nome, email, senha, documento, unidade_id , cargos } = request.body;
+            const {
+                nome,
+                email,
+                senha,
+                documento,
+                unidade_id,
+                cargos
+            } = request.body;
 
             if(!documento || !checkCpfOrCnpj(documento)) {
                 return response.status(400).json({
@@ -35,15 +41,8 @@ export default {
                 });
             }
 
-            const unidade = await getWorkstations(unidade_id);
 
-            if(unidade.error) {
-                return response.status(400).json({
-                    error: true,
-                    message: unidade.message
-                });
-            }
-
+        
             const senhaCryptografada = encryptPassword(senha);
 
             const user = await prisma.user.create({
@@ -83,13 +82,15 @@ export default {
                 },
             });
 
-            const id = user.id;
+            const {id, nome} = user;
+            
 
             if (user && bcrypt.compareSync(senha, user.senha)) {
                 // Criar e assinar o token
                 const token = jwt.sign({
                     id,
-                    email
+                    email,
+                    nome
                 }, 'segredo', { expiresIn: '1h' });
 
                 return response.json({ token });

@@ -23,14 +23,10 @@ type WorkstationOutputType = {
 }
 
 export const getWorkstations = async (id) => {
-    try {
-        const response = await api.get(`/schedular/workstations/${id}`);
+   
+    const response = await api.get(`/schedular/workstations/${id}`);
 
-        if(response.status !== 200) {
-            return {error:true, message: 'Não foi possível encontrar Unidade no servico Schedula'};
-        }
-        return {error: false, data: response.data as WorkstationOutputType};
-    } catch (error) {
-        return {error:true, message: 'Erro: Unidade não encontrada no servico Schedula'};
-    }
+     
+    return {error: false, data: response.data as WorkstationOutputType};
+  
 };
