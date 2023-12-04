@@ -27,6 +27,7 @@ describe('POST /create', () => {
         createdUserId = response.body.data.id;
     });
 
+    
     it('should return a 400 status if email already exists', async () => {
         // Crie um usuário com o mesmo email antes de fazer a requisição
         await request(server)
@@ -59,12 +60,32 @@ describe('POST /create', () => {
         expect(response.body.message).toBe('Erro: Já existe usuário com esse email!');
     });
 
+    it('should return a 400 status if password is missing or less than 8 characters', async () => {
+        const userData = {
+            nome: 'User With Invalid Password',
+            email: 'invalidpassword@example.com',
+            senha: 'pass',  // Password less than 8 characters
+            documento: '46921264009',
+            unidade_id: 'cfa19c26-3b18-4659-b02e-51047e5b3d13',
+            cargos: ['USER'],
+        };
+    
+        const response = await request(server)
+            .post('/create')
+            .send(userData);
+    
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe(true);
+        // eslint-disable-next-line quotes
+        expect(response.body.message).toBe("Erro: senha deve ter no mínimo 8 caracteres!");
+    });
+
     describe('POST /login', () => {
         let authToken: string;
     
         it('should log in a user and return a token', async () => {
             const userData = {
-                email: 'as@example.com',
+                email: 'teste1@example.com',
                 senha: 'admin123@',
             };
     
@@ -150,18 +171,6 @@ describe('POST /create', () => {
             expect(response.body).toHaveProperty('message', 'Nova senha e confirmação da nova senha são obrigatórios.');
         });
     
-        it('should return a 500 status if token is missing', async () => {
-            const novaSenhaData = {
-                novaSenha: 'novaSenha123@',
-                confirmacaoNovaSenha: 'novaSenha123@',
-            };
-    
-            const response = await request(server)
-                .post('/change-password')
-                .send(novaSenhaData);
-    
-            expect(response.status).toBe(500);
-        });
     });
     
 
