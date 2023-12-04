@@ -173,8 +173,35 @@ describe('POST /create', () => {
     
     });
     
-
+    describe('GET /', () => {
+        it('should return a  of users and a 200 status', async () => {
+            // Assuming there are users in the database for testing
+            const response = await request(server)
+                .get('/');
     
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Array);
+        });
+    
+        it('should return a 500 status and an error message on database error', async () => {
+            // Mocking a database error by causing an invalid query
+            jest.spyOn(prisma.user, 'findMany').mockImplementationOnce(() => {
+                throw new Error('Database error');
+            });
+    
+            const response = await request(server)
+                .get('/');
+    
+            expect(response.status).toBe(500);
+            expect(response.body).toHaveProperty('error', true);
+            expect(response.body).toHaveProperty('message', 'Erro: Ocorreu um erro ao buscar os Usuarios.');
+    
+            // Restore the original implementation of prisma.user.findMany
+            jest.restoreAllMocks();
+        });
+    });
+
+
     // Limpeza: Remover o usuário de teste criado
     afterAll(async () => {
         if (createdUserId) {
