@@ -60,6 +60,8 @@ describe('POST /create', () => {
     });
 
     describe('POST /login', () => {
+        let authToken: string;
+    
         it('should log in a user and return a token', async () => {
             const userData = {
                 email: 'as@example.com',
@@ -72,13 +74,15 @@ describe('POST /create', () => {
     
             expect(response.status).toBe(200);
             expect(response.body).toHaveProperty('token');
+    
+            // Armazenar o token para uso nos testes posteriores
+            authToken = response.body.token;
         });
     
         it('should return a 401 status if email or senha is invalid', async () => {
             const userData = {
                 email: 'asaas@admin.com',
                 senha: 'WE@',
-        
             };
     
             const response = await request(server)
@@ -88,7 +92,79 @@ describe('POST /create', () => {
             expect(response.status).toBe(401);
             expect(response.body).toHaveProperty('message', 'E-mail ou senha inválidos');
         });
+    
+        describe('POST /change-password', () => {
+            it('should update the user password and return a 200 status', async () => {
+                // Certifique-se de que authToken está definido antes de executar este teste
+                expect(authToken).toBeDefined();
+    
+                const novaSenhaData = {
+                    novaSenha: 'novaSenha123@',
+                    confirmacaoNovaSenha: 'novaSenha123@',
+                };
+    
+                const response = await request(server)
+                    .post('/change-password')
+                    .set('Authorization', authToken)  // Usar o token obtido no login
+                    .send(novaSenhaData);
+    
+                expect(response.status).toBe(200);
+                expect(response.body).toHaveProperty('message', 'Senha atualizada com sucesso!');
+                expect(response.body).toHaveProperty('userUpdated');
+            });
+    
+            // Outros testes relacionados à mudança de senha aqui...
+        });
+
+        it('should return a 400 status if novaSenha and confirmacaoNovaSenha do not match', async () => {
+            const token = 'token_valido_do_usuario';
+    
+            const novaSenhaData = {
+                novaSenha: 'novaSenha123@',
+                confirmacaoNovaSenha: 'senhaDiferente',
+            };
+    
+            const response = await request(server)
+                .post('/change-password')
+                .set('Authorization', token)
+                .send(novaSenhaData);
+    
+            expect(response.status).toBe(400);
+            expect(response.body).toHaveProperty('message', 'Nova senha e confirmação da nova senha são obrigatórios.');
+        });
+    
+        it('should return a 400 status if novaSenha or confirmacaoNovaSenha is missing', async () => {
+            const token = 'token_valido_do_usuario';
+    
+            const novaSenhaData = {
+                novaSenha: 'novaSenha123@',
+                // confirmacaoNovaSenha is intentionally missing
+            };
+    
+            const response = await request(server)
+                .post('/change-password')
+                .set('Authorization', token)
+                .send(novaSenhaData);
+    
+            expect(response.status).toBe(400);
+            expect(response.body).toHaveProperty('message', 'Nova senha e confirmação da nova senha são obrigatórios.');
+        });
+    
+        it('should return a 500 status if token is missing', async () => {
+            const novaSenhaData = {
+                novaSenha: 'novaSenha123@',
+                confirmacaoNovaSenha: 'novaSenha123@',
+            };
+    
+            const response = await request(server)
+                .post('/change-password')
+                .send(novaSenhaData);
+    
+            expect(response.status).toBe(500);
+        });
     });
+    
+
     
     // Limpeza: Remover o usuário de teste criado
     afterAll(async () => {
