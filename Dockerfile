@@ -5,10 +5,10 @@ WORKDIR /src
 ENV PORT=8000
 
 COPY ./package.json .
-RUN yarn install
+RUN npm install
 
 COPY . .
 
 EXPOSE $PORT
 
-CMD [ "yarn", "start" ]
+CMD [ "npm", "start" ]
