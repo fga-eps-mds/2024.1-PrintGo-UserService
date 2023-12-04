@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 import { encryptPassword } from '../adapters/bcrypt.adapter';
 import { prisma } from '../database';
 import { checkCpfOrCnpj } from '../middlewares/checkCpfOrCnpj.middleware';
-import { getWorkstations } from '../services/externals/schedula.service';
 
 
 export default {
@@ -40,19 +39,7 @@ export default {
                     error: true,
                     message: 'Erro: Já existe usuário com esse email!'
                 });
-            }
-
-            if (unidade_id) {
-              const unidade = await getWorkstations(unidade_id);
-
-              if(unidade.error) {
-                  return response.status(400).json({
-                      error: true,
-                      message: unidade.message
-                  });
-              }
-            }
-            
+            }           
 
             const senhaCryptografada = encryptPassword(senha);
 
