@@ -42,8 +42,6 @@ export default {
                 });
             }
 
-
-        
             const senhaCryptografada = encryptPassword(senha);
 
             const user = await prisma.user.create({
@@ -84,7 +82,7 @@ export default {
             });
 
             const {id, nome} = user;
-            
+
 
             if (user && bcrypt.compareSync(senha, user.senha)) {
                 // Criar e assinar o token
@@ -144,24 +142,21 @@ export default {
 
     },
 
-
-    
-
     async esqueciSenha(request: Request, response: Response) {
         try {
             const { email } = request.body;
-      
+
             const user = await prisma.user.findUnique({
                 where: {
                     email: email,
                 },
             });
-      
+
             if (!user) {
                 return response.status(404).json({ message: 'Usuário não encontrado.' });
 
             }
-            
+
             const token = crypto.randomBytes(20).toString('hex');
             const now = new Date();
             now.setHours(now.getHours() + 1);
@@ -175,8 +170,6 @@ export default {
                     resetPasswordExpires: now.toISOString(),
                 },
             });
-            console.log(token, now);
-
             const transporter = nodemailer.createTransport({
                 host: process.env.SMPT_HOST,
                 port: process.env.SMPT_PORT,
@@ -187,25 +180,25 @@ export default {
                 },
             });
 
-            const resetLink = `${process.env.BASE_URL}/recuperarSenha?token=${token}`;
+            const resetLink = `${process.env.FRONT_URL}/recuperarSenha?token=${token}`;
             const emailContent = `
             <p>Olá, você poderá redefinir sua senha para acessar o sistema.</p>
             <p>Clique no seguinte link para redefinir sua senha:</p>
             <a href="${resetLink}">${resetLink}</a>
-          `;
-      
+            `;
+
             await transporter.sendMail({
                 from: process.env.SMPT_MAIL,
                 to: email,
                 subject: 'Recuperação de Senha',
-                context: { token}, 
+                context: { token},
                 html: emailContent,
             }), (error) =>{
                 if(error)
                     return response.status(400).json({ message: 'Ocorreu um erro inesperado.' });
-                
+
             };
-      
+
             return response.status(201).json({ message: 'Email de recuperação enviado com sucesso.' });
         } catch (error) {
             console.error(error);
@@ -215,43 +208,46 @@ export default {
 
     async  resetPassword(request: Request, response: Response) {
         try {
-            const { token } = request.query;
-            const { senha } = request.body;
-    
+            const { senha, token} = request.body;
+
             if (!token || typeof token !== 'string') {
                 return response.status(400).json({ message: 'Token inválido.' });
             }
-    
-            // Find the user by the reset token
             const user = await prisma.user.findFirst({
                 where: {
                     resetPasswordToken: token,
                 },
             });
-    
+            const dataExpired = new Date(user.resetPasswordExpires);
+            const dataAtual = new Date();
+
+            if(dataAtual > dataExpired) {
+                return response.status(400).json({ message: 'Token expirado.' });
+            }
+
             if (!user) {
                 return response.status(400).json({ message: 'Token inválido ou expirado.' });
             }
-    
-            // Update the user's password and clear the reset token
+
+            const senhaCryptografada = encryptPassword(senha);
             await prisma.user.update({
                 where: {
                     id: user.id,
                 },
                 data: {
-                    senha: senha,
+                    senha: senhaCryptografada,
                     resetPasswordToken: null,
                     resetPasswordExpires: null,
                 },
             });
-    
-            return response.status(200).json({ message: 'Senha redefinida com sucesso.' });
+
+            return response.status(201).json({ message: 'Senha redefinida com sucesso.' });
         } catch (error) {
             console.error(error);
             return response.status(500).json({ message: 'Ocorreu um erro inesperado.' });
         }
     },
-    
+
     async  listUsers(request: Request, response: Response) {
         try {
             const users = await prisma.user.findMany();
