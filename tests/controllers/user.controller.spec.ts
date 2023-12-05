@@ -6,6 +6,7 @@ import UserController from '../../src/controllers/User.controller';
 describe('User Controller', () => {
     let user_created_id: string;
     let authToken: string;
+    let forgottenToken: string;
     const defaultEmail = `teste${Date.now()}@example.com`;
     const defaultPass = 'admin123@';
     const defaultUnit= '3dd05192-f770-40c3-80cd-c180208527c7';
@@ -251,6 +252,90 @@ describe('User Controller', () => {
 
         expect(response.status).toBe(200);
         expect(response.body.message).toBe('Sucesso: Usuário atualizado com sucesso!');
+    });
+
+    it('forgotten password success', async () => {
+        const response = await request(server)
+            .post('/forgotten-password')
+            .send({
+                email: defaultEmail
+            });
+
+        expect(response.status).toBe(201);
+        expect(response.body.message).toBe('Email de recuperação enviado com sucesso.');
+        forgottenToken = response.body.token;
+        console.log(forgottenToken);
+
+    });
+
+    it('forgotten password not founded', async () => {
+        const response = await request(server)
+            .post('/forgotten-password')
+            .send({
+                email: `${defaultEmail}123`
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe('Usuário não encontrado.');
+    });
+
+    it('user reset password success', async () => {
+        const response = await request(server)
+            .post('/recover-password')
+            .send({
+                senha: 'adksadkjlaaa',
+                token: forgottenToken
+            });
+        expect(response.status).toBe(201);
+        expect(response.body.message).toBe('Senha redefinida com sucesso.');
+    });
+
+    it('user invalid token', async () => {
+        const response = await request(server)
+            .post('/recover-password')
+            .send({
+                token: null,
+                senha: 'adksadkjlaaa'
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe('Token inválido.');
+    });
+
+    it('user invalid token', async () => {
+        const response = await request(server)
+            .post('/recover-password')
+            .send({
+                token: 15,
+                senha: 'adksadkjlaaa'
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe('Token inválido.');
+    });
+
+    it('user reset password success', async () => {
+        const response = await request(server)
+            .post('/recover-password')
+            .send({
+                token: forgottenToken,
+                senha: 'adksadkjlaaa'
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe('Token inválido ou expirado.');
+    });
+
+    it('user reset password success', async () => {
+        const response = await request(server)
+            .post('/recover-password')
+            .send({
+                token: 'tokenNotFOunded',
+                senha: 'adksadkjlaaa'
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe('Token inválido ou expirado.');
     });
 
 });
