@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { encryptPassword } from '../adapters/bcrypt.adapter';
 import { prisma } from '../database';
 import { checkCpfOrCnpj } from '../middlewares/checkCpfOrCnpj.middleware';
+import nodemailer from 'nodemailer';
 
 
 export default {
@@ -143,7 +144,51 @@ export default {
 
     },
 
-
+    async esqueciSenha(request: Request, response: Response) {
+        try {
+            const { email } = request.body;
+      
+            const user = await prisma.user.findUnique({
+                where: {
+                    email: email,
+                },
+            });
+      
+            if (!user) {
+                return response.status(404).json({ message: 'Usuário não encontrado.' });
+            }
+      
+            const transporter = nodemailer.createTransport({
+                host: process.env.SMPT_HOST,
+                port: process.env.SMPT_PORT,
+                secure: false,
+                auth: {
+                    user: process.env.SMPT_MAIL,
+                    pass: process.env.SMPT_PASSWORD,
+                },
+            });
+      
+            const resetLink = `${process.env.BASE_URL}/user/change-password/${user.id}`;
+            const emailContent = `
+            <p>Olá, você poderá redefinir sua senha para acessar o sistema.</p>
+            <p>Clique no seguinte link para redefinir sua senha:</p>
+            <a href="${resetLink}">${resetLink}</a>
+          `;
+      
+            await transporter.sendMail({
+                from: process.env.SMPT_MAIL,
+                to: email,
+                subject: 'Recuperação de Senha',
+                html: emailContent,
+            });
+      
+            return response.status(200).json({ message: 'Email de recuperação enviado com sucesso.' });
+        } catch (error) {
+            console.error(error);
+            return response.status(500).json({ message: 'Ocorreu um erro inesperado.' });
+        }
+    },
+    
     async  listUsers(request: Request, response: Response) {
         try {
             const users = await prisma.user.findMany();
