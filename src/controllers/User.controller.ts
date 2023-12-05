@@ -193,15 +193,10 @@ export default {
                 subject: 'Recuperação de Senha',
                 context: { token},
                 html: emailContent,
-            }), (error) =>{
-                if(error)
-                    return response.status(400).json({ message: 'Ocorreu um erro inesperado.' });
+            });
 
-            };
-
-            return response.status(201).json({ message: 'Email de recuperação enviado com sucesso.' });
+            return response.status(201).json({ message: 'Email de recuperação enviado com sucesso.', token: token });
         } catch (error) {
-            console.error(error);
             return response.status(500).json({ message: 'Ocorreu um erro inesperado.' });
         }
     },
@@ -218,15 +213,15 @@ export default {
                     resetPasswordToken: token,
                 },
             });
+
+            if (!user) {
+                return response.status(400).json({ message: 'Token inválido ou expirado.' });
+            }
             const dataExpired = new Date(user.resetPasswordExpires);
             const dataAtual = new Date();
 
             if(dataAtual > dataExpired) {
                 return response.status(400).json({ message: 'Token expirado.' });
-            }
-
-            if (!user) {
-                return response.status(400).json({ message: 'Token inválido ou expirado.' });
             }
 
             const senhaCryptografada = encryptPassword(senha);
@@ -243,7 +238,6 @@ export default {
 
             return response.status(201).json({ message: 'Senha redefinida com sucesso.' });
         } catch (error) {
-            console.error(error);
             return response.status(500).json({ message: 'Ocorreu um erro inesperado.' });
         }
     },
