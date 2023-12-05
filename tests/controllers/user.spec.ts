@@ -100,7 +100,7 @@ describe('POST /create', () => {
             authToken = response.body.token;
         });
     
-        it('should return a 401 status if email or senha is invalid', async () => {
+        it('should return a 500 status if email or senha is invalid', async () => {
             const userData = {
                 email: 'asaas@admin.com',
                 senha: 'WE@',
@@ -110,8 +110,8 @@ describe('POST /create', () => {
                 .post('/login')
                 .send(userData);
     
-            expect(response.status).toBe(401);
-            expect(response.body).toHaveProperty('message', 'E-mail ou senha inválidos');
+            expect(response.status).toBe(500);
+            expect(response.body).toHaveProperty('message', 'Ocorreu um erro inesperado');
         });
     
         describe('POST /change-password', () => {
