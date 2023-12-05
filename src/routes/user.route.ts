@@ -10,5 +10,6 @@ userRoutes.get('/:id', requestHandler(UserController.getUserById));
 userRoutes.patch('/:id', requestHandler(UserController.updateUser));
 userRoutes.post('/change-password', requestHandler(UserController.mudancaSenha));
 userRoutes.post('/login', requestHandler(UserController.login));
-userRoutes.post('/esqueceu-senha', requestHandler(UserController.esqueciSenha));
+userRoutes.post('/forgotten-password', requestHandler(UserController.esqueciSenha));
+userRoutes.post('/recuperarSenha', requestHandler(UserController.resetPassword));
 export default userRoutes;

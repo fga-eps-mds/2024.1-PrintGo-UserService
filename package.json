@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/fga-eps-mds/2023.2-PrintGo-UserService#readme",
   "dependencies": {
-    "@fernandes-natanael/printgo-prisma": "^1.0.15",
+    "@fernandes-natanael/printgo-prisma": "^1.0.17",
     "@prisma/client": "^5.4.2",
     "@types/bcryptjs": "^2.4.5",
     "axios": "^1.6.2",
