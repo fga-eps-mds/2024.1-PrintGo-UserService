@@ -4,18 +4,19 @@ import jwt from 'jsonwebtoken';
 import { encryptPassword } from '../adapters/bcrypt.adapter';
 import { prisma } from '../database';
 import { checkCpfOrCnpj } from '../middlewares/checkCpfOrCnpj.middleware';
-
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 
 export default {
     async createUser(request: Request, response: Response) {
         try {
             const {
-              nome,
-              email,
-              senha,
-              documento,
-              unidade_id,
-              cargos
+                nome,
+                email,
+                senha,
+                documento,
+                unidade_id,
+                cargos
             } = request.body;
 
             if(!documento || !checkCpfOrCnpj(documento)) {
@@ -142,6 +143,105 @@ export default {
 
     },
 
+    async esqueciSenha(request: Request, response: Response) {
+        try {
+            const { email } = request.body;
+
+            const user = await prisma.user.findUnique({
+                where: {
+                    email: email,
+                },
+            });
+
+            if (!user) {
+                return response.status(404).json({ message: 'Usuário não encontrado.' });
+
+            }
+
+            const token = crypto.randomBytes(20).toString('hex');
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+
+            await prisma.user.update({
+                where: {
+                    id: user.id,
+                },
+                data: {
+                    resetPasswordToken: token,
+                    resetPasswordExpires: now.toISOString(),
+                },
+            });
+            const transporter = nodemailer.createTransport({
+                host: process.env.SMPT_HOST,
+                port: process.env.SMPT_PORT,
+                secure: false,
+                auth: {
+                    user: process.env.SMPT_MAIL,
+                    pass: process.env.SMPT_PASSWORD,
+                },
+            });
+
+            const resetLink = `${process.env.FRONT_URL}/recuperarSenha?token=${token}`;
+            const emailContent = `
+            <p>Olá, você poderá redefinir sua senha para acessar o sistema.</p>
+            <p>Clique no seguinte link para redefinir sua senha:</p>
+            <a href="${resetLink}">${resetLink}</a>
+            `;
+
+            await transporter.sendMail({
+                from: process.env.SMPT_MAIL,
+                to: email,
+                subject: 'Recuperação de Senha',
+                context: { token},
+                html: emailContent,
+            });
+
+            return response.status(201).json({ message: 'Email de recuperação enviado com sucesso.', token: token });
+        } catch (error) {
+            return response.status(500).json({ message: 'Ocorreu um erro inesperado.' });
+        }
+    },
+
+    async  resetPassword(request: Request, response: Response) {
+        try {
+            const { senha, token} = request.body;
+
+            if (!token || typeof token !== 'string') {
+                return response.status(400).json({ message: 'Token inválido.' });
+            }
+            const user = await prisma.user.findFirst({
+                where: {
+                    resetPasswordToken: token,
+                },
+            });
+
+            if (!user) {
+                return response.status(400).json({ message: 'Token inválido ou expirado.' });
+            }
+            const dataExpired = new Date(user.resetPasswordExpires);
+            const dataAtual = new Date();
+
+            if(dataAtual > dataExpired) {
+                return response.status(400).json({ message: 'Token expirado.' });
+            }
+
+            const senhaCryptografada = encryptPassword(senha);
+            await prisma.user.update({
+                where: {
+                    id: user.id,
+                },
+                data: {
+                    senha: senhaCryptografada,
+                    resetPasswordToken: null,
+                    resetPasswordExpires: null,
+                },
+            });
+
+            return response.status(201).json({ message: 'Senha redefinida com sucesso.' });
+        } catch (error) {
+            return response.status(500).json({ message: 'Ocorreu um erro inesperado.' });
+        }
+    },
 
     async  listUsers(request: Request, response: Response) {
         try {
