@@ -40,7 +40,7 @@ export default {
                     error: true,
                     message: 'Erro: Já existe usuário com esse email!'
                 });
-            }
+            }           
 
             const senhaCryptografada = encryptPassword(senha);
 
@@ -81,15 +81,16 @@ export default {
                 },
             });
 
-            const {id, nome} = user;
-
+            const {id, nome, cargos} = user;
+            
 
             if (user && bcrypt.compareSync(senha, user.senha)) {
                 // Criar e assinar o token
                 const token = jwt.sign({
                     id,
                     email,
-                    nome
+                    nome,
+                    cargos
                 }, 'segredo', { expiresIn: '1h' });
 
                 return response.json({ token });

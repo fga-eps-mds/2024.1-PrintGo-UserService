@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const api = axios.create({
     baseURL: process.env.APIGATEWAY_API_URL,
-    timeout: 5000,
+    timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -25,7 +25,6 @@ type WorkstationOutputType = {
 export const getWorkstations = async (id) => {
    
     const response = await api.get(`/schedular/workstations/${id}`);
-
      
     return {error: false, data: response.data as WorkstationOutputType};
   
