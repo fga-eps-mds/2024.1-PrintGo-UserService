@@ -8,6 +8,7 @@
     "test:all": "CI=true npm run test -- --coverage",
     "start": "nodemon",
     "lint": "eslint  --ext .ts",
+    "build": "tsc",
     "lint:fix": "eslint  --ext .ts --fix"
   },
   "repository": {
