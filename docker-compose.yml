@@ -1,8 +1,8 @@
 version: "3.1"
 
 services:
-  api:
-    container_name: printgo-user-service
+  user-api:
+    container_name: user-api
     restart: on-failure
     build: .
     environment:
@@ -18,11 +18,6 @@ services:
     networks:
       - printgo_network
 
-volumes:
-  printgo_database:
-
 networks:
-    printgo_network:
-        driver: bridge
-        driver_opts:
-            com.docker.network.bridge.enable_icc: "true"
+  printgo_network:
+    external: true
