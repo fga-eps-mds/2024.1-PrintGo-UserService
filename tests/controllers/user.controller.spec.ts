@@ -342,6 +342,19 @@ describe('User Controller', () => {
         expect(response.body.message).toBe('Token inválido ou expirado.');
     });
 
+    // Deleção de usuário.
+    it('should try to delete a user and return 500 error status', async () => {
+      // Mocking a database error by causing an invalid query
+      jest.spyOn(prisma.user, 'delete').mockImplementationOnce(() => {
+          throw new Error('Database error');
+      });
+
+      const response = await request(server)
+          .delete(`/${user_created_id}`);
+      
+      expect(response.status).toBe(500);
+    });
+
     it('should delete a user and return a 200 status', async () => {
       const response = await request(server)
           .delete(`/${user_created_id}`);
