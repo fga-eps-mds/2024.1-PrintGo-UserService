@@ -13,12 +13,16 @@ describe('User Controller', () => {
 
     afterAll(async () => {
         await server.close();
-        if (user_created_id) {
+        try {
+          if (user_created_id) {
             await prisma.user.delete({
                 where: {
                     id: user_created_id,
                 },
             });
+          }
+        } catch (error) {
+          console.log("Erro ao deletar o usuário criado.")
         }
     });
 
@@ -58,7 +62,7 @@ describe('User Controller', () => {
         // Tente criar um novo usuário com o mesmo email
         const userData = {
             nome: 'Another User',
-            email: 'ass@example.com',
+            email: defaultEmail,
             senha: 'newPassword',
             documento: '46921264009', // CPF ou CNPJ válido
             unidade_id: 'cfa19c26-3b18-4659-b02e-51047e5b3d13',
@@ -265,7 +269,6 @@ describe('User Controller', () => {
         expect(response.body.message).toBe('Email de recuperação enviado com sucesso.');
         forgottenToken = response.body.token;
         console.log(forgottenToken);
-
     });
 
     it('forgotten password not founded', async () => {
@@ -336,6 +339,22 @@ describe('User Controller', () => {
 
         expect(response.status).toBe(400);
         expect(response.body.message).toBe('Token inválido ou expirado.');
+    });
+
+    it('should delete a user and return a 200 status', async () => {
+      const response = await request(server)
+          .delete(`/${user_created_id}`);
+      
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Sucesso: Usuário deletado com sucesso!');
+    });
+
+    it('should try to delete non-existent user and return 404 status', async () => {
+      const response = await request(server)
+          .delete(`/${user_created_id}`);
+      
+      expect(response.status).toBe(404);
+      expect(response.body.error).toBe("Erro: Usuário não encontrado.");
     });
 
 });
