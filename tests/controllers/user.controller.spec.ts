@@ -13,16 +13,17 @@ describe('User Controller', () => {
 
     afterAll(async () => {
         await server.close();
-        try {
-          if (user_created_id) {
-            await prisma.user.delete({
-                where: {
-                    id: user_created_id,
-                },
-            });
-          }
-        } catch (error) {
-          console.log("Erro ao deletar o usuário criado.")
+        
+        const user = await prisma.user.findUnique({
+          where: { id: String(user_created_id) },
+        });
+        
+        if (user) {
+          await prisma.user.delete({
+              where: {
+                  id: user_created_id,
+              },
+          });
         }
     });
 
