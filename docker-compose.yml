@@ -13,11 +13,25 @@ services:
       - .:/src
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+    depends_on:
+      - postgres-printgo
+    networks:
+      - printgo_network
+
+  postgres-printgo:
+    image: postgres:13
+    container_name: postgres-printgo
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: printgo-local
+    ports:
+      - "5445:5432"
     networks:
       - printgo_network
 
 networks:
   printgo_network:
+    name: printgo_network
+    driver: bridge
     external: true
