@@ -17,10 +17,11 @@ services:
       - postgres-printgo
     networks:
       - printgo_network
+    command: ["sh", "-c", "npx prisma db push && yarn start"]
 
   postgres-printgo:
     image: postgres:13
-    container_name: postgres-printgo
+    container_name: postgres-printgo-user
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
